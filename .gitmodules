@@ -1,0 +1,4 @@
+[submodule "yosys-src"]
+	path = yosys-src
+	url = https://github.com/YosysHQ/yosys
+  branch = master
