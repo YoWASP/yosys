@@ -3,16 +3,16 @@ from setuptools_scm.git import parse as parse_git
 
 
 def version():
-    yosys_git = parse_git("../yosys-src")
-    if yosys_git.exact:
-        yosys_version = yosys_git.format_with("{tag}")
+    upstream_git = parse_git("../yosys-src")
+    if upstream_git.exact:
+        upstream_version = upstream_git.format_with("{tag}")
     else:
-        yosys_version = yosys_git.format_with("{tag}.post{distance}")
+        upstream_version = upstream_git.format_with("{tag}.post{distance}")
 
     package_git = parse_git("..")
     package_version = package_git.format_with(".dev{distance}")
 
-    return yosys_version + package_version
+    return upstream_version + package_version
 
 
 def long_description():
@@ -37,13 +37,12 @@ setup(
     ],
     packages=["yowasp_yosys"],
     package_data={"yowasp_yosys": [
-        "yosys.wasm",
-        # why
-        "share/*", "share/**/*", "share/**/**/*", "share/**/**/**/*"
+        "*.wasm",
+        "share/*", "share/**/*", "share/**/**/*", "share/**/**/**/*", # why
     ]},
     entry_points={
         "console_scripts": [
-            "yowasp-yosys = yowasp_yosys:_run_yosys_argv",
+            "yowasp-yosys = yowasp_yosys:run_yosys",
         ],
     },
     project_urls={
