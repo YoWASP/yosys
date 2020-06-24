@@ -1,2 +1,4 @@
 /wasi-sdk-*
 *.wasm
+
+/*-build
