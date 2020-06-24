@@ -36,8 +36,12 @@ def _run_wasm_app(wasm_filename, argv):
         "wasi_snapshot_preview1", wasi_cfg))
     app = linker.instantiate(wasmtime.Module(store,
         importlib_resources.read_binary(__package__, wasm_filename)))
-    app.exports["_start"]()
+    try:
+        app.exports["_start"]()
+        return 0
+    except wasmtime.ExitTrap as trap:
+        return trap.code
 
 
 def run_yosys(argv=sys.argv):
-    _run_wasm_app("yosys.wasm", argv)
+    sys.exit(_run_wasm_app("yosys.wasm", argv))
