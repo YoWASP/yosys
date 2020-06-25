@@ -26,9 +26,7 @@ jobs:
           ./build.sh
       - name: Build binary wheels
         run: |
-          cd pypi 
-          python setup.py bdist_wheel 
-          sha256sum dist/*.whl
+          ./package-pypi.sh
       - name: Upload binary wheel artifact
         uses: actions/upload-artifact@v2
         with:

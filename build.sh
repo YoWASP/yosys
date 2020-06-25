@@ -21,6 +21,3 @@ CXXFLAGS += -flto
 LDFLAGS += -flto -Wl,--strip-all
 END
 make -C yosys-build -f ../yosys-src/Makefile PRETTY=0 CXX="ccache clang"
-
-rm -rf pypi/yowasp_yosys/share
-cp -r yosys-build/yosys.wasm yosys-build/share pypi/yowasp_yosys/
