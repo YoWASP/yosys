@@ -43,5 +43,9 @@ def _run_wasm_app(wasm_filename, argv):
         return trap.code
 
 
-def run_yosys(argv=sys.argv):
-    sys.exit(_run_wasm_app("yosys.wasm", argv))
+def run_yosys(argv):
+    return _run_wasm_app("yosys.wasm", argv)
+
+
+def _run_yosys_argv():
+    sys.exit(run_yosys(sys.argv))

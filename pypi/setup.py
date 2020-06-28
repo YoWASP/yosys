@@ -42,7 +42,7 @@ setup(
     ]},
     entry_points={
         "console_scripts": [
-            "yowasp-yosys = yowasp_yosys:run_yosys",
+            "yowasp-yosys = yowasp_yosys:_run_yosys_argv",
         ],
     },
     project_urls={
