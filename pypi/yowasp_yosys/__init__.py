@@ -21,7 +21,7 @@ def _run_wasm_app(wasm_filename, argv):
     wasm_cfg.cache = True
 
     wasi_cfg = wasmtime.WasiConfig()
-    wasi_cfg.argv = (os.path.basename(argv[0]), *argv[1:])
+    wasi_cfg.argv = argv
     wasi_cfg.preopen_dir(str(importlib_resources.files(__package__) / "share"), "/share")
     wasi_cfg.preopen_dir(_tempdir.name, "/tmp")
     wasi_cfg.preopen_dir("/", "/")
@@ -44,8 +44,8 @@ def _run_wasm_app(wasm_filename, argv):
 
 
 def run_yosys(argv):
-    return _run_wasm_app("yosys.wasm", argv)
+    return _run_wasm_app("yosys.wasm", ["yowasp-yosys", *argv])
 
 
 def _run_yosys_argv():
-    sys.exit(run_yosys(sys.argv))
+    sys.exit(run_yosys(sys.argv[1:]))
