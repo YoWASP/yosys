@@ -1,0 +1,24 @@
+on:
+  schedule:
+    - cron: 0 * * * *
+name: Auto-update
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Update upstream code
+        run: |
+          git -C yosys-src pull --ff-only origin master
+      - name: Create/update pull request
+        uses: peter-evans/create-pull-request@v2.8.1
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
+          commit-message: 'Update upstream code'
+          title: 'Auto-update'
+          labels: automerge
+          branch: update-deps
