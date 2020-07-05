@@ -43,6 +43,7 @@ setup(
     entry_points={
         "console_scripts": [
             "yowasp-yosys = yowasp_yosys:_run_yosys_argv",
+            "yowasp-yosys-smtbmc = yowasp_yosys:_run_yosys_smtbmc_argv",
         ],
     },
     project_urls={

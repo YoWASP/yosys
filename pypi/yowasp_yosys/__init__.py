@@ -49,3 +49,12 @@ def run_yosys(argv):
 
 def _run_yosys_argv():
     sys.exit(run_yosys(sys.argv[1:]))
+
+
+def _run_yosys_smtbmc_argv():
+    prefix = importlib_resources.files(__package__)
+    sys.path.append(str(prefix / "share" / "python3"))
+    smtbmc_py = prefix / "smtbmc.py"
+    with open(smtbmc_py) as f:
+        globals = {}
+        exec(compile(f.read(), smtbmc_py, "exec"), globals, globals)
