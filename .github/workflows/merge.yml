@@ -1,0 +1,15 @@
+on:
+  check_run:
+    types:
+      - completed
+name: Auto-merge
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge pull requests
+        uses: pascalgn/automerge-action@v0.8.4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_METHOD: rebase
+          MERGE_DELETE_BRANCH: true
