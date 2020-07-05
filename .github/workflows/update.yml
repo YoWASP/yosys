@@ -1,0 +1,22 @@
+on:
+  schedule:
+    - cron: 0 0 * * *
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+name: Cron
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update packages
+        uses: technote-space/create-pr-action@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          EXECUTE_COMMANDS: |
+            git submodule update --init
+            git -C yosys-src pull --ff origin master
+          COMMIT_MESSAGE: 'Update dependencies'
+          PR_BRANCH_PREFIX: 'update-deps/'
+          PR_BRANCH_NAME: '${PR_ID}'
+          PR_TITLE: 'Auto-update dependencies'
+          AUTO_MERGE_THRESHOLD_DAYS: 1
