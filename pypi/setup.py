@@ -33,7 +33,7 @@ setup(
     setup_requires=["setuptools_scm", "wheel"],
     install_requires=[
         "importlib_resources; python_version<'3.9'",
-        "wasmtime~=0.18.1"
+        "wasmtime~=0.18.2"
     ],
     packages=["yowasp_yosys"],
     package_data={"yowasp_yosys": [
