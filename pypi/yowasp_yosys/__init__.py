@@ -26,6 +26,8 @@ def _run_wasm_app(wasm_filename, argv):
     wasi_cfg.preopen_dir(_tempdir.name, "/tmp")
     wasi_cfg.preopen_dir("/", "/")
     wasi_cfg.preopen_dir(".", ".")
+    # sby needs to run `yowasp-yosys -ql ../model/design.log ../model/design.ys`
+    wasi_cfg.preopen_dir("..", "..")
     wasi_cfg.inherit_stdin()
     wasi_cfg.inherit_stdout()
     wasi_cfg.inherit_stderr()
@@ -58,3 +60,12 @@ def _run_yosys_smtbmc_argv():
     with open(smtbmc_py) as f:
         globals = {}
         exec(compile(f.read(), smtbmc_py, "exec"), globals, globals)
+
+
+def _run_sby_argv():
+    prefix = importlib_resources.files(__package__)
+    sys.path.append(str(prefix / "share" / "python3"))
+    sby_py = prefix / "sby.py"
+    with open(sby_py) as f:
+        globals = {}
+        exec(compile(f.read(), sby_py, "exec"), globals, globals)

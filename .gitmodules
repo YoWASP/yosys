@@ -2,3 +2,6 @@
 	path = yosys-src
 	url = https://github.com/YosysHQ/yosys
   branch = master
+[submodule "SymbiYosys-src"]
+	path = SymbiYosys-src
+	url = https://github.com/YosysHQ/SymbiYosys

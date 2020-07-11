@@ -5,3 +5,4 @@ __pycache__/
 /dist
 /yowasp_yosys/share
 /yowasp_yosys/smtbmc.py
+/yowasp_yosys/sby.py
