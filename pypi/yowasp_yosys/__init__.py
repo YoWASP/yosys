@@ -36,7 +36,7 @@ def _run_wasm_app(wasm_filename, argv):
     linker = wasmtime.Linker(store)
     wasi = linker.define_wasi(wasmtime.WasiInstance(store,
         "wasi_snapshot_preview1", wasi_cfg))
-    app = linker.instantiate(wasmtime.Module(store,
+    app = linker.instantiate(wasmtime.Module(store.engine,
         importlib_resources.read_binary(__package__, wasm_filename)))
     try:
         app.exports["_start"]()
