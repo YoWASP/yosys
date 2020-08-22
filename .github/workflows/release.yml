@@ -1,0 +1,17 @@
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+name: Auto-release
+jobs:
+  autorelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+      - name: Create pull request
+        uses: repo-sync/pull-request@v2
+        with:
+          pr_title: 'Release current development snapshot to PyPI'
+          source_branch: develop
+          destination_branch: release
+          github_token: ${{ secrets.GITHUB_TOKEN }}
