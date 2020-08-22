@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '0 0 * * *'
 name: Auto-update
 jobs:
   autoupdate:
@@ -9,16 +9,14 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
           submodules: true
+          fetch-depth: 0
+          token: ${{ secrets.PUSH_TOKEN }}
       - name: Update upstream code
         run: |
           git -C yosys-src pull --ff-only origin master
-      - name: Create/update pull request
-        uses: peter-evans/create-pull-request@v2.8.1
+          git -C SymbiYosys-src pull --ff-only origin master
+      - name: Push updated code
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Update upstream code'
-          title: 'Auto-update'
-          labels: automerge
-          branch: update-deps
+          commit_message: Update dependencies.
