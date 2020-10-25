@@ -2,6 +2,8 @@ import os
 import sys
 import tempfile
 import wasmtime
+import pathlib
+import appdirs
 try:
     from importlib import resources as importlib_resources
     try:
@@ -17,9 +19,6 @@ _tempdir = tempfile.TemporaryDirectory("yosys")
 
 
 def _run_wasm_app(wasm_filename, argv):
-    wasm_cfg = wasmtime.Config()
-    wasm_cfg.cache = True
-
     wasi_cfg = wasmtime.WasiConfig()
     wasi_cfg.argv = argv
     wasi_cfg.preopen_dir(str(importlib_resources.files(__package__) / "share"), "/share")
@@ -31,13 +30,26 @@ def _run_wasm_app(wasm_filename, argv):
     wasi_cfg.inherit_stdin()
     wasi_cfg.inherit_stdout()
     wasi_cfg.inherit_stderr()
+    
+    engine = wasmtime.Engine()
+    cache_path = pathlib.Path(appdirs.user_cache_dir("yowasp"))
+    cache_path.mkdir(parents=True, exist_ok=True)
+    cache_filename = (cache_path / "{}-cache".format(wasm_filename))
+    try:
+        with cache_filename.open("rb") as cache_file:
+            module = wasmtime.Module.deserialize(engine, cache_file.read())
+    except:
+        print("Preparing to run {}. This might take a while...".format(argv[0]), file=sys.stderr)
+        module = wasmtime.Module(engine,
+            importlib_resources.read_binary(__package__, wasm_filename))
+        with cache_filename.open("wb") as cache_file:
+            cache_file.write(module.serialize())
 
-    store = wasmtime.Store(wasmtime.Engine(wasm_cfg))
+    store = wasmtime.Store(engine)
     linker = wasmtime.Linker(store)
     wasi = linker.define_wasi(wasmtime.WasiInstance(store,
         "wasi_snapshot_preview1", wasi_cfg))
-    app = linker.instantiate(wasmtime.Module(store.engine,
-        importlib_resources.read_binary(__package__, wasm_filename)))
+    app = linker.instantiate(module)
     try:
         app.exports["_start"]()
         return 0
