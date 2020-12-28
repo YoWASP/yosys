@@ -6,6 +6,8 @@ WASI_SDK=wasi-sdk-11.0
 WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-11/wasi-sdk-11.0-linux.tar.gz
 if ! [ -d ${WASI_SDK} ]; then curl -L ${WASI_SDK_URL} | tar xzf -; fi
 
+${WASI_SDK}/bin/clang --sysroot ${WASI_SDK}/share/wasi-sysroot -c getopt_long.c
+
 mkdir -p yosys-build
 cat >yosys-build/Makefile.conf <<END
 export PATH := $(pwd)/${WASI_SDK}/bin:${PATH}
@@ -21,5 +23,6 @@ ENABLE_ZLIB := 0
 
 CXXFLAGS += -flto
 LDFLAGS += -flto -Wl,--strip-all
+LDLIBS := $(pwd)/getopt_long.o
 END
 make -C yosys-build -f ../yosys-src/Makefile PRETTY=0 CXX="ccache clang"
