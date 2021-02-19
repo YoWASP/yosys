@@ -2,8 +2,8 @@
 
 export SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
 
-WASI_SDK=wasi-sdk-12.0
-WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-12/wasi-sdk-12.0-linux.tar.gz
+WASI_SDK=wasi-sdk-11.0
+WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-11/wasi-sdk-11.0-linux.tar.gz
 if ! [ -d ${WASI_SDK} ]; then curl -L ${WASI_SDK_URL} | tar xzf -; fi
 
 ${WASI_SDK}/bin/clang --sysroot ${WASI_SDK}/share/wasi-sysroot -c getopt_long.c
