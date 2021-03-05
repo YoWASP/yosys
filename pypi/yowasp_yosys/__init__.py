@@ -36,7 +36,7 @@ def _run_wasm_app(wasm_filename, argv):
     wasi_cfg.inherit_stderr()
     
     engine = wasmtime.Engine()
-    cache_path = pathlib.Path(appdirs.user_cache_dir("yowasp"))
+    cache_path = pathlib.Path(os.getenv("YOWASP_CACHE_DIR", appdirs.user_cache_dir("yowasp")))
     cache_path.mkdir(parents=True, exist_ok=True)
     cache_filename = (cache_path / "{}-cache".format(wasm_filename))
     digest_filename = (cache_path / "{}-digest".format(wasm_filename))
