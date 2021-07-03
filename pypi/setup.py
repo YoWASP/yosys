@@ -37,7 +37,7 @@ setup(
     install_requires=[
         "importlib_resources; python_version<'3.9'",
         "appdirs~=1.4",
-        "wasmtime>=0.20,<0.22"
+        "wasmtime>=0.20,<0.28"
     ],
     packages=["yowasp_yosys"],
     package_data={"yowasp_yosys": [
