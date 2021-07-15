@@ -54,13 +54,14 @@ def _run_wasm_app(wasm_filename, argv):
         with digest_filename.open("wb") as digest_file:
             digest_file.write(module_digest)
 
+    linker = wasmtime.Linker(engine)
+    linker.define_wasi()
     store = wasmtime.Store(engine)
-    linker = wasmtime.Linker(store)
-    wasi = linker.define_wasi(wasmtime.WasiInstance(store,
-        "wasi_snapshot_preview1", wasi_cfg))
-    app = linker.instantiate(module)
+    store.set_wasi(wasi_cfg)
+    app = linker.instantiate(store, module)
+    linker.define_instance(store, "app", app)
     try:
-        app.exports["_start"]()
+        app.exports(store)["_start"](store)
         return 0
     except wasmtime.ExitTrap as trap:
         return trap.code
