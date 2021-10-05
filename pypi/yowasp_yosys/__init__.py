@@ -44,8 +44,7 @@ def _run_wasm_app(wasm_filename, argv):
         with digest_filename.open("rb") as digest_file:
             if digest_file.read() != module_digest:
                 raise Exception("cache miss")
-        with cache_filename.open("rb") as cache_file:
-            module = wasmtime.Module.deserialize(engine, cache_file.read())
+        module = wasmtime.Module.deserialize_file(engine, str(cache_filename))
     except:
         print("Preparing to run {}. This might take a while...".format(argv[0]), file=sys.stderr)
         module = wasmtime.Module(engine, module_binary)
