@@ -1,13 +1,15 @@
+import re
 from setuptools import setup, find_packages
 from setuptools_scm.git import parse as parse_git
 
 
 def version():
-    upstream_git = parse_git("../yosys-src")
-    if upstream_git.exact:
-        upstream_version = upstream_git.format_with("{tag}")
+    with open("../yosys-src/Makefile", "r") as f:
+        yosys_version = re.search(r"^YOSYS_VER := ([\d.]+)\+(\d+)$", f.read(), re.M)
+    if yosys_version[2] == "0":
+        upstream_version = yosys_version[1]
     else:
-        upstream_version = upstream_git.format_with("{tag}.post{distance}")
+        upstream_version = yosys_version[1] + ".post" + yosys_version[2]
 
     package_git = parse_git("..")
     if not package_git.dirty:
