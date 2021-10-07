@@ -27,10 +27,15 @@ def _run_wasm_app(wasm_filename, argv):
     wasi_cfg.argv = argv
     wasi_cfg.preopen_dir(str(importlib_resources.files(__package__) / "share"), "/share")
     wasi_cfg.preopen_dir(_tempdir.name, "/tmp")
-    wasi_cfg.preopen_dir("/", "/")
+    if os.name == "nt":
+        for letter in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            wasi_cfg.preopen_dir(letter + ":\\", letter + ":")
+    else:
+        wasi_cfg.preopen_dir("/", "/")
     wasi_cfg.preopen_dir(".", ".")
-    # sby needs to run `yowasp-yosys -ql ../model/design.log ../model/design.ys`
-    wasi_cfg.preopen_dir("..", "..")
+    for level in range(len(pathlib.Path().cwd().parts)):
+        wasi_cfg.preopen_dir(str(pathlib.Path("").joinpath(*[".."] * level)),
+                             "/".join([".."] * level))
     wasi_cfg.inherit_stdin()
     wasi_cfg.inherit_stdout()
     wasi_cfg.inherit_stderr()
