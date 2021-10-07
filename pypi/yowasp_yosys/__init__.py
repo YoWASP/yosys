@@ -81,7 +81,7 @@ def _run_yosys_argv():
 
 def _run_yosys_smtbmc_argv():
     prefix = importlib_resources.files(__package__)
-    sys.path.append(str(prefix / "share" / "python3"))
+    sys.path[0:0] = [str(prefix / "share" / "python3")]
     smtbmc_py = prefix / "smtbmc.py"
     with open(smtbmc_py) as f:
         globals = {}
@@ -90,7 +90,7 @@ def _run_yosys_smtbmc_argv():
 
 def _run_sby_argv():
     prefix = importlib_resources.files(__package__)
-    sys.path.append(str(prefix / "share" / "python3"))
+    sys.path[0:0] = [str(prefix / "share" / "python3")]
     sby_py = prefix / "sby.py"
     with open(sby_py) as f:
         globals = {}
