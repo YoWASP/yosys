@@ -15,10 +15,6 @@ except ImportError:
     import importlib_resources # py3.6- shim
 
 
-# This isn't used yet but if yosys-abc becomes a separate binary then it will be.
-_tempdir = tempfile.TemporaryDirectory("yosys")
-
-
 def _run_wasm_app(wasm_filename, argv):
     module_binary = importlib_resources.read_binary(__package__, wasm_filename)
     module_digest = hashlib.sha1(module_binary).digest()
@@ -26,7 +22,6 @@ def _run_wasm_app(wasm_filename, argv):
     wasi_cfg = wasmtime.WasiConfig()
     wasi_cfg.argv = argv
     wasi_cfg.preopen_dir(str(importlib_resources.files(__package__) / "share"), "/share")
-    wasi_cfg.preopen_dir(_tempdir.name, "/tmp")
     if os.name == "nt":
         for letter in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ":
             wasi_cfg.preopen_dir(letter + ":\\", letter + ":")
