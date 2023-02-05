@@ -1,16 +1,16 @@
 on:
   schedule:
     - cron: '0 0 * * *'
-name: Auto-update
+name: Track upstream commits
 jobs:
-  autoupdate:
+  track_upstream:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
-          submodules: true
           fetch-depth: 0
+          submodules: true
           token: ${{ secrets.PUSH_TOKEN }}
       - name: Update upstream code
         run: |

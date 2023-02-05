@@ -6,21 +6,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools setuptools_scm wheel
           sudo apt-get install flex bison ccache
-      - name: Set up ccache
-        uses: actions/cache@v1
+      - name: Set up caching
+        uses: actions/cache@v3
         with:
-          path: ~/.ccache
+          path: ~/.cache/ccache
           key: ${{ runner.os }}-
+      - name: Set up ccache
+        run: |
+          ccache --max-size=2G -z
       - name: Build WASM binaries
         run: |
           ./build.sh
@@ -28,7 +33,7 @@ jobs:
         run: |
           ./package-pypi.sh
       - name: Upload binary wheel artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: wheel
           path: pypi/dist/
@@ -36,11 +41,18 @@ jobs:
         run: |
           pip install pypi/dist/*.whl
           yowasp-yosys --help
+      - name: Print ccache statistics
+        run: |
+          ccache -s
+      - name: Update release branch
+        if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && github.ref == 'refs/heads/develop'"
+        run: |
+          git push origin develop:release
   publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: wheel
         path: dist/
