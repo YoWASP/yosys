@@ -1,9 +1,10 @@
 on:
   schedule:
     - cron: '0 0 * * *'
-name: Track upstream commits
+  workflow_dispatch:
+name: Track upstream activity
 jobs:
-  track_upstream:
+  track_commits:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
@@ -20,3 +21,33 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update dependencies.
+  track_releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+          token: ${{ secrets.PUSH_TOKEN }}
+      - name: Check out new upstream tag
+        id: checkout-tag
+        run: |
+          for tag in $(git -C yosys-src tag -l 'yosys-*' | sort -rV); do
+            ref=$(git -C yosys-src rev-parse $tag)
+            branch=develop-${tag/yosys-/}
+            if ! git rev-parse -q --verify remotes/origin/${branch} >/dev/null; then
+              echo "New branch ${branch} with yosys-src ${ref}"
+              git -C yosys-src checkout ${ref}
+              # 2023-02-06: https://github.com/YosysHQ/sby/issues/229
+              echo "version=${tag/yosys-/}" >> $GITHUB_OUTPUT
+              break
+            fi; 
+          done
+      - name: Push new branch
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: steps.checkout-tag.outputs.version
+        with:
+          commit_message: "[autorelease] Yosys ${{ steps.checkout-tag.outputs.version }}."
+          branch: develop-${{ steps.checkout-tag.outputs.version }}
+          create_branch: true
