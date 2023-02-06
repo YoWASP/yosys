@@ -44,10 +44,6 @@ jobs:
       - name: Print ccache statistics
         run: |
           ccache -s
-      - name: Update release branch
-        if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && github.ref == 'refs/heads/develop'"
-        run: |
-          git push origin develop:release
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -69,3 +65,16 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.pypi_token }}
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && github.ref == 'refs/heads/develop'"
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PUSH_TOKEN }}
+      - name: Update release branch
+        run: |
+          git push origin develop:release
