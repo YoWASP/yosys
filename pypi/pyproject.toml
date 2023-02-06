@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools~=67.0", "setuptools_scm~=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+
+name = "yowasp-yosys"
+description = "Yosys Open SYnthesis Suite"
+readme = "README.md"
+authors = [{name = "Catherine", email = "whitequark@whitequark.org"}]
+license = {text = "ISC"}
+classifiers = [
+	"License :: OSI Approved :: ISC License (ISCL)"
+]
+
+dependencies = [
+	"importlib_resources; python_version<'3.9'",
+	"yowasp-runtime~=1.0"
+]
+
+[project.scripts]
+yowasp-yosys = "yowasp_yosys:_run_yosys_argv"
+yowasp-yosys-smtbmc = "yowasp_yosys:_run_yosys_smtbmc_argv"
+yowasp-sby = "yowasp_yosys:_run_sby_argv"
+
+[project.urls]
+"Homepage" = "https://yowasp.org/"
+"Source Code" = "https://github.com/YoWASP/yosys"
+"Bug Tracker" = "https://github.com/YoWASP/yosys/issues"
+
+[tool.setuptools.package-data]
+yowasp_yosys = ["*.wasm", "share/*", "share/**/*", "share/**/**/*", "share/**/**/**/*"]
