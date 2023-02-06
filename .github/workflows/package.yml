@@ -53,14 +53,14 @@ jobs:
         name: wheel
         path: dist/
     - name: Publish wheels to Test PyPI
-      if: github.event_name == 'push' && github.event.ref == 'refs/heads/develop'
+      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.test_pypi_token }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish wheels to PyPI
-      if: github.event_name == 'push' && github.event.ref == 'refs/heads/release'
+      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
@@ -68,7 +68,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && github.ref == 'refs/heads/develop'"
+    if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
@@ -77,4 +77,6 @@ jobs:
           token: ${{ secrets.PUSH_TOKEN }}
       - name: Update release branch
         run: |
-          git push origin develop:release
+          release_branch=${{ github.event.ref }}
+          release_branch=${release_branch/develop/release}
+          git push origin HEAD:${release_branch}
