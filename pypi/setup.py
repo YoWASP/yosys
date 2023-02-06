@@ -1,23 +1,36 @@
 import re
+import subprocess
 from setuptools import setup
 from setuptools_scm.git import parse as parse_git
 
 
 def version():
-    with open("../yosys-src/Makefile", "r") as f:
-        yosys_version = re.search(r"^YOSYS_VER := ([\d.]+)(?:\+(\d+))?$", f.read(), re.M)
-    if yosys_version[2] is None or yosys_version[2] == "0":
-        upstream_version = yosys_version[1]
-    else:
-        upstream_version = yosys_version[1] + ".post" + yosys_version[2]
+    upstream_git = parse_git("../yosys-src")
+    package_git  = parse_git("..")
 
-    package_git = parse_git("..")
-    if not package_git.dirty:
-        package_version = package_git.format_with(".dev{distance}")
-    else:
-        package_version = package_git.format_with(".dev{distance}+dirty")
+    yosys_version_raw = subprocess.check_output([
+        "make", "-s", "-C", "../yosys-src", "echo-yosys-ver"
+    ], encoding="utf-8").strip()
 
-    return upstream_version + package_version
+    # Yosys can't figure out if it should have a patch version or not.
+    # Match one, and add one below in our version just in case.
+    yosys_version = re.match(r"^(\d+)\.(\d+)(?:\.(\d+))?(?:\+(\d+))?$", yosys_version_raw)
+    yosys_major  = int(yosys_version[1])
+    yosys_minor  = int(yosys_version[2])
+    yosys_patch  = int(yosys_version[3] or "0")
+    yosys_node   = int(yosys_version[4]) if yosys_version[4] else None
+    
+    version = f"{yosys_major}.{yosys_minor}.{yosys_patch}"
+    if yosys_node is None: # release
+        version += f".0"
+    else: # snapshot
+        version += f".{yosys_node}"
+    version += f".post{package_git.distance}"
+    if yosys_node is not None: # snapshot
+        version += f".dev"
+    if upstream_git.dirty or package_git.dirty:
+        version += f"+dirty"
+    return version
 
 
 setup(
