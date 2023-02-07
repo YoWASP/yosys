@@ -27,7 +27,7 @@ def version():
         version += f".{yosys_node}"
     version += f".post{package_git.distance}"
     if yosys_node is not None: # snapshot
-        version += f".dev"
+        version += f".dev0"
     if upstream_git.dirty or package_git.dirty:
         version += f"+dirty"
     return version
