@@ -16,7 +16,7 @@ classifiers = [
 
 dependencies = [
 	"importlib_resources; python_version<'3.9'",
-	"yowasp-runtime~=1.0"
+	"yowasp-runtime~=1.12"
 ]
 
 [project.scripts]
