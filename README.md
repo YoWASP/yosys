@@ -7,6 +7,7 @@ This package provides [Yosys][] binaries built for [WebAssembly][]. See the [ove
 [webassembly]: https://webassembly.org/
 [yowasp]: https://yowasp.github.io/
 
+
 Versioning
 ----------
 
@@ -27,6 +28,13 @@ A different versioning scheme was used earlier, where the package build version 
 [pypi]: https://pypi.org/
 [pep440]: https://peps.python.org/pep-0440/
 [pep440-vs]: https://peps.python.org/pep-0440/#version-specifiers
+
+
+Configuration
+-------------
+
+See the documentation for [yowasp-runtime](https://github.com/YoWASP/runtime#configuration).
+
 
 License
 -------
