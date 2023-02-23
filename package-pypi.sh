@@ -13,5 +13,5 @@ cp SymbiYosys-src/sbysrc/sby_*.py \
   pypi/yowasp_yosys/share/python3
 
 cd pypi
-${PYTHON} setup.py bdist_wheel
+rm -rf build && ${PYTHON} -m build -w
 sha256sum dist/*.whl

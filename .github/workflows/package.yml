@@ -16,7 +16,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools setuptools_scm wheel
+          python -m pip install --upgrade pip build
           sudo apt-get install flex bison ccache
       - name: Set up caching
         uses: actions/cache@v3
