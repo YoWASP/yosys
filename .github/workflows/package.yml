@@ -37,20 +37,49 @@ jobs:
         with:
           name: wheel
           path: pypi/dist/
-      - name: Test binary wheels
-        run: |
-          pip install pypi/dist/*.whl
-          yowasp-yosys --help
-          yowasp-sby --help
-          yowasp-yosys-smtbmc --help || true
       - name: Print ccache statistics
         run: |
           ccache -s
-  publish:
+  test:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+        - '3.7'
+        - '3.8'
+        - '3.9'
+        - '3.10'
+        - '3.11'
+        - '3.12-dev'
     steps:
-    - uses: actions/download-artifact@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '${{ matrix.python-version }}'
+    - name: Download binary wheel artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: wheel
+        path: dist/
+    - name: Test binary wheels
+      run: |
+        pip install dist/*.whl
+        yowasp-yosys --help
+        yowasp-sby --help
+        yowasp-yosys-smtbmc --help || true
+  check: # group all `test (*)` workflows into one for the required status check
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          true
+  publish:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download binary wheel artifact
+      uses: actions/download-artifact@v3
       with:
         name: wheel
         path: dist/
