@@ -41,6 +41,8 @@ jobs:
         run: |
           pip install pypi/dist/*.whl
           yowasp-yosys --help
+          yowasp-sby --help
+          yowasp-yosys-smtbmc --help || true
       - name: Print ccache statistics
         run: |
           ccache -s
