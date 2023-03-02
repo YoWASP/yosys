@@ -67,7 +67,7 @@ jobs:
         pip install dist/*.whl
         yowasp-yosys --help
         yowasp-sby --help
-        yowasp-yosys-smtbmc --help || true
+        yowasp-yosys-smtbmc --help
   check: # group all `test (*)` workflows into one for the required status check
     needs: test
     runs-on: ubuntu-latest
