@@ -21,8 +21,21 @@ def _run_yosys_smtbmc_argv():
     sys.path[0:0] = [str(prefix / "share" / "python3")]
     smtbmc_py = prefix / "smtbmc.py"
     with open(smtbmc_py) as f:
-        globals = {}
+        globals = {"__name__": "__main__"}
         exec(compile(f.read(), smtbmc_py, "exec"), globals, globals)
+
+
+def _run_yosys_witness_argv():
+    prefix = importlib_resources.files(__package__)
+    sys.path[0:0] = [str(prefix / "share" / "python3")]
+    ywio_py = prefix / "ywio.py"
+    with open(ywio_py) as f:
+        globals = {}
+        exec(compile(f.read(), ywio_py, "exec"), globals, globals)
+    witness_py = prefix / "witness.py"
+    with open(witness_py) as f:
+        globals = {"__name__": "__main__"}
+        exec(compile(f.read(), witness_py, "exec"), globals, globals)
 
 
 def _run_sby_argv():

@@ -68,6 +68,7 @@ jobs:
         yowasp-yosys --help
         yowasp-sby --help
         yowasp-yosys-smtbmc --help
+        yowasp-yosys-witness --help
   check: # group all `test (*)` workflows into one for the required status check
     needs: test
     runs-on: ubuntu-latest
