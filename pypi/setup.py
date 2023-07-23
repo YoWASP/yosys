@@ -1,3 +1,4 @@
+import os
 import re
 import subprocess
 from setuptools import setup
@@ -21,13 +22,15 @@ def version():
     yosys_node   = int(yosys_version[4]) if yosys_version[4] else None
     
     version = f"{yosys_major}.{yosys_minor}.{yosys_patch}"
-    if yosys_node is None: # release
+    if yosys_node is None: # Yosys release
         version += f".0"
-    else: # snapshot
+    else: # Yosys snapshot
         version += f".{yosys_node}"
     version += f".post{package_git.distance}"
-    if yosys_node is not None: # snapshot
-        version += f".dev0"
+    if os.environ.get("RELEASE_BRANCH", "false") in ("true", "1", "yes"):
+        pass # PyPI release (installable normally)
+    elif yosys_node is not None:
+        version += f".dev0" # PyPI snapshot (installable by exact version)
     if upstream_git.dirty or package_git.dirty:
         version += f"+dirty"
     return version
