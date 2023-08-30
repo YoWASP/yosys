@@ -93,7 +93,7 @@ jobs:
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        repository_url: https://test.pypi.org/legacy/
+        repository-url: https://test.pypi.org/legacy/
     - name: Publish wheels to PyPI
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
       uses: pypa/gh-action-pypi-publish@release/v1
