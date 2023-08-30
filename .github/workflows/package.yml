@@ -80,6 +80,9 @@ jobs:
   publish:
     needs: check
     runs-on: ubuntu-latest
+    environment: publish
+    permissions:
+      id-token: write
     steps:
     - name: Download binary wheel artifact
       uses: actions/download-artifact@v3
@@ -90,15 +93,10 @@ jobs:
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        user: __token__
-        password: ${{ secrets.test_pypi_token }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish wheels to PyPI
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_token }}
   release:
     needs: check
     runs-on: ubuntu-latest
