@@ -21,9 +21,8 @@ ENABLE_READLINE := 0
 ENABLE_PLUGINS := 0
 ENABLE_ZLIB := 0
 
-WASIFLAGS := -D_WASI_EMULATED_PROCESS_CLOCKS
 CXXFLAGS += -flto
 LDFLAGS += -Wl,--strip-all
-LDLIBS := -lwasi-emulated-process-clocks $(pwd)/getopt_long.o
+LDLIBS := $(pwd)/getopt_long.o
 END
 make -C yosys-build -f ../yosys-src/Makefile PRETTY=0 CXX="ccache clang"
