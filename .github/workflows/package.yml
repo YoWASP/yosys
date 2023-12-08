@@ -34,18 +34,27 @@ jobs:
       - name: Build WASM binaries
         run: |
           ./build.sh
-      - name: Build binary wheels
+      - name: Build Python artifact
         run: |
           ./package-pypi.sh
-      - name: Upload binary wheel artifact
+      - name: Upload Python artifact
         uses: actions/upload-artifact@v3
         with:
-          name: wheel
+          name: dist-pypi
           path: pypi/dist/
+      - name: Build JavaScript artifact
+        run: |
+          ./package-npmjs.sh
+          cp npmjs/test/test_api.mjs npmjs/dist/
+      - name: Upload JavaScript artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-npmjs
+          path: npmjs/dist/
       - name: Print ccache statistics
         run: |
           ccache -s
-  test:
+  test-python:
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -62,35 +71,57 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '${{ matrix.python-version }}'
-    - name: Download binary wheel artifact
+    - name: Download Python artifact
       uses: actions/download-artifact@v3
       with:
-        name: wheel
+        name: dist-pypi
         path: dist/
-    - name: Test binary wheels
+    - name: Test Python artifact
       run: |
         pip install dist/*.whl
         yowasp-yosys --help
         yowasp-sby --help
         yowasp-yosys-smtbmc --help
         yowasp-yosys-witness --help
+  test-javascript:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 'v18.x'
+          - 'v20.x'
+    steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '${{ matrix.node-version }}'
+    - name: Download JavaScript artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dist-npmjs
+        path: dist/
+    - name: Test JavaScript artifact
+      run: |
+        npm install ./dist/*.tgz
+        node dist/test_api.mjs
   check: # group all `test (*)` workflows into one for the required status check
-    needs: test
+    needs: [test-python, test-javascript]
     if: always() && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:
       - run: ${{ contains(needs.*.result, 'failure') && 'false' || 'true' }}
-  publish:
+  publish-python:
     needs: check
     runs-on: ubuntu-latest
     environment: publish
     permissions:
       id-token: write
     steps:
-    - name: Download binary wheel artifact
+    - name: Download Python artifact
       uses: actions/download-artifact@v3
       with:
-        name: wheel
+        name: dist-pypi
         path: dist/
     - name: Publish wheels to Test PyPI
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
@@ -100,6 +131,24 @@ jobs:
     - name: Publish wheels to PyPI
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
       uses: pypa/gh-action-pypi-publish@release/v1
+  publish-javascript:
+    needs: check
+    runs-on: ubuntu-latest
+    if: "${{ startsWith(github.event.ref, 'refs/heads/develop') || startsWith(github.event.ref, 'refs/heads/release') }}"
+    steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        registry-url: 'https://registry.npmjs.org'
+    - name: Download JavaScript artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dist-npmjs
+        path: dist/
+    - name: Publish package to NPM
+      run: npm publish --access public $(find dist -name *.tgz -printf 'file:%f ')
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   release:
     needs: check
     runs-on: ubuntu-latest
