@@ -24,7 +24,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/ccache
-          key: ${{ runner.os }}-
+          key: yosys-${{ hashFiles('yosys-src', 'SymbiYosys-src', 'build.sh') }}
+          restore-keys: |
+            yosys-${{ hashFiles('yosys-src', 'SymbiYosys-src', 'build.sh') }}
+            yosys-
       - name: Set up ccache
         run: |
           ccache --max-size=2G -z
