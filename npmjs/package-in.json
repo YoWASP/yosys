@@ -1,0 +1,36 @@
+{
+    "name": "@yowasp/yosys",
+    "version": "__VERSION__",
+    "description": "Yosys Open SYnthesis Suite",
+    "author": "Catherine <whitequark@whitequark.org>",
+    "license": "ISC",
+    "homepage": "https://yowasp.org/",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/YoWASP/yosys.git"
+    },
+    "bugs": {
+        "url": "https://github.com/YoWASP/yosys/issues"
+    },
+    "type": "module",
+    "files": [
+        "gen/*.json",
+        "gen/*.wasm",
+        "gen/bundle-*.js"
+    ],
+    "exports": {
+        "node": "./gen/bundle-node.js",
+        "browser": "./gen/bundle-browser.js"
+    },
+    "devDependencies": {
+        "@bytecodealliance/jco": "^0.14.1",
+        "@yowasp/runtime": "3.1.14",
+        "esbuild": "^0.19.8"
+    },
+    "scripts": {
+        "pack": "yowasp-pack-resources ../yosys-build/share gen/yosys-share.json",
+        "transpile": "jco new ../yosys-build/yosys.wasm --wasi-command --output yosys.wasm && jco transpile yosys.wasm --instantiation async --no-typescript --no-namespaced-exports --map 'wasi:io/*=runtime#io' --map 'wasi:cli/*=runtime#cli' --map 'wasi:clocks/*=runtime#*' --map 'wasi:filesystem/*=runtime#fs' --out-dir gen/",
+        "build:node": "esbuild --bundle lib/api.js --outfile=gen/bundle-node.js --format=esm --platform=node",
+        "build:browser": "esbuild --bundle lib/api.js --outfile=gen/bundle-browser.js --format=esm --platform=browser"
+    }
+}
