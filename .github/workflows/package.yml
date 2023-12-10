@@ -117,6 +117,7 @@ jobs:
     environment: publish
     permissions:
       id-token: write
+    if: "!contains(github.event.head_commit.message, 'skip py')"
     steps:
     - name: Download Python artifact
       uses: actions/download-artifact@v3
@@ -134,7 +135,7 @@ jobs:
   publish-javascript:
     needs: check
     runs-on: ubuntu-latest
-    if: "${{ startsWith(github.event.ref, 'refs/heads/develop') || startsWith(github.event.ref, 'refs/heads/release') }}"
+    if: "!contains(github.event.head_commit.message, 'skip js')"
     steps:
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -146,7 +147,8 @@ jobs:
         name: dist-npmjs
         path: dist/
     - name: Publish package to NPM
-      run: npm publish --access public $(find dist -name *.tgz -printf 'file:%f ')
+      if: "${{ startsWith(github.event.ref, 'refs/heads/develop') || startsWith(github.event.ref, 'refs/heads/release') }}"
+      run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ')
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   release:
