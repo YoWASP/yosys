@@ -5,7 +5,7 @@ export { Exit } from '@yowasp/runtime';
 
 // Paths are relative to the bundle, which lives in gen/ together with the other build products.
 const yosys = new Application(import.meta.url, {
-    'share': './yosys-share.json',
+    'share': './data-share.js',
 }, {
     'yosys.core.wasm': './yosys.core.wasm',
     'yosys.core2.wasm': './yosys.core2.wasm',
