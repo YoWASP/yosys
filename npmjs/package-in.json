@@ -14,22 +14,26 @@
     },
     "type": "module",
     "files": [
+        "lib/api.d.ts",
+        "gen/bundle-*.js",
+        "gen/resources-*.js",
         "gen/*.wasm",
-        "gen/data-*.js",
-        "gen/bundle-*.js"
+        "gen/share"
     ],
     "exports": {
         "node": "./gen/bundle-node.js",
-        "browser": "./gen/bundle-browser.js"
+        "browser": "./gen/bundle-browser.js",
+        "types": "./lib/api.d.ts"
     },
+    "types": "./lib/api.d.ts",
     "devDependencies": {
         "@bytecodealliance/jco": "^0.14.1",
-        "@yowasp/runtime": "4.0",
+        "@yowasp/runtime": "5.0.25",
         "esbuild": "^0.19.8"
     },
     "scripts": {
-        "pack": "yowasp-pack-resources ../yosys-build/share gen/data-share.js",
-        "transpile": "jco new ../yosys-build/yosys.wasm --wasi-command --output yosys.wasm && jco transpile yosys.wasm --instantiation async --no-typescript --no-namespaced-exports --map 'wasi:io/*=runtime#io' --map 'wasi:cli/*=runtime#cli' --map 'wasi:clocks/*=runtime#*' --map 'wasi:filesystem/*=runtime#fs' --out-dir gen/",
+        "pack": "yowasp-pack-resources gen/resources-yosys.js gen ../yosys-build/share",
+        "transpile": "jco new ../yosys-build/yosys.wasm --wasi-command --output yosys.wasm && jco transpile yosys.wasm --instantiation async --no-typescript --no-namespaced-exports --map 'wasi:io/*=runtime#io' --map 'wasi:cli/*=runtime#cli' --map 'wasi:clocks/*=runtime#*' --map 'wasi:filesystem/*=runtime#fs' --map 'wasi:random/*=runtime#random' --out-dir gen/",
         "build:node": "esbuild --bundle lib/api.js --outfile=gen/bundle-node.js --format=esm --platform=node",
         "build:browser": "esbuild --bundle lib/api.js --outfile=gen/bundle-browser.js --format=esm --platform=browser"
     }
