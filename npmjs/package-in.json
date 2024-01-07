@@ -15,26 +15,25 @@
     "type": "module",
     "files": [
         "lib/api.d.ts",
-        "gen/bundle-*.js",
+        "gen/bundle.js",
         "gen/resources-*.js",
         "gen/*.wasm",
-        "gen/share"
+        "gen/share/"
     ],
     "exports": {
-        "node": "./gen/bundle-node.js",
-        "browser": "./gen/bundle-browser.js",
+        "default": "./gen/bundle.js",
         "types": "./lib/api.d.ts"
     },
     "types": "./lib/api.d.ts",
     "devDependencies": {
         "@bytecodealliance/jco": "0.14.2",
-        "@yowasp/runtime": "6.0.30",
+        "@yowasp/runtime": "6.0.34",
         "esbuild": "^0.19.8"
     },
     "scripts": {
-        "pack": "yowasp-pack-resources gen/resources-yosys.js gen ../yosys-build/share",
         "transpile": "jco new ../yosys-build/yosys.wasm --wasi-command --output yosys.wasm && jco transpile yosys.wasm --instantiation async --no-typescript --no-namespaced-exports --map 'wasi:io/*=runtime#io' --map 'wasi:cli/*=runtime#cli' --map 'wasi:clocks/*=runtime#*' --map 'wasi:filesystem/*=runtime#fs' --map 'wasi:random/*=runtime#random' --out-dir gen/",
-        "build:node": "esbuild --bundle lib/api.js --outfile=gen/bundle-node.js --format=esm --platform=node",
-        "build:browser": "esbuild --bundle lib/api.js --outfile=gen/bundle-browser.js --format=esm --platform=browser"
+        "pack": "yowasp-pack-resources gen/resources-yosys.js gen ../yosys-build/share",
+        "build": "esbuild --bundle lib/api.js --outfile=gen/bundle.js --format=esm --platform=node",
+        "all": "npm run transpile && npm run pack && npm run build"
     }
 }
