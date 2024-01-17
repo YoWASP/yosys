@@ -21,8 +21,8 @@
         "gen/share/"
     ],
     "exports": {
-        "default": "./gen/bundle.js",
-        "types": "./lib/api.d.ts"
+        "types": "./lib/api.d.ts",
+        "default": "./gen/bundle.js"
     },
     "types": "./lib/api.d.ts",
     "devDependencies": {
