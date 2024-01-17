@@ -154,7 +154,7 @@ jobs:
       run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ') --dry-run
     - name: Publish package to NPM
       if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
-      run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ') ${github.event.ref == 'refs/heads/release' && '--tag latest' || '--tag release'}
+      run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ') ${{ github.event.ref == 'refs/heads/release' && '--tag latest' || '--tag release' }}
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         NPM_CONFIG_PROVENANCE: true
