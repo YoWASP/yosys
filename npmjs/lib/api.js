@@ -3,9 +3,7 @@ import { instantiate } from '../gen/yosys.js';
 
 export { Exit } from '@yowasp/runtime';
 
-const resourceFileURL = new URL('./resources-yosys.js', import.meta.url);
-
-const yosys = new Application(resourceFileURL, instantiate, 'yowasp-yosys');
+const yosys = new Application(() => import('./resources-yosys.js'), instantiate, 'yowasp-yosys');
 const runYosys = yosys.run.bind(yosys);
 
 export { runYosys };
