@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
@@ -42,10 +42,10 @@ jobs:
               # 2023-02-06: https://github.com/YosysHQ/sby/issues/229
               echo "version=${tag/yosys-/}" >> $GITHUB_OUTPUT
               break
-            fi; 
+            fi;
           done
       - name: Push new branch
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         if: steps.checkout-tag.outputs.version
         with:
           commit_message: "[autorelease] Yosys ${{ steps.checkout-tag.outputs.version }}."

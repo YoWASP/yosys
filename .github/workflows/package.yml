@@ -2,18 +2,18 @@ on: [push, pull_request]
 name: Build & publish
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') }}
     runs-on: ubuntu-latest
     env:
-      RELEASE_BRANCH: "${{ startsWith(github.event.ref, 'refs/heads/develop-') || startsWith(github.event.ref, 'refs/heads/release-') }}"
+      RELEASE_BRANCH: ${{ startsWith(github.event.ref, 'refs/heads/develop-') || startsWith(github.event.ref, 'refs/heads/release-') }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
@@ -21,7 +21,7 @@ jobs:
           python -m pip install --upgrade pip build
           sudo apt-get install flex bison ccache
       - name: Set up caching
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/ccache
           key: yosys-${{ hashFiles('yosys-src', 'SymbiYosys-src', 'build.sh') }}
@@ -38,7 +38,7 @@ jobs:
         run: |
           ./package-pypi.sh
       - name: Upload Python artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-pypi
           path: pypi/dist/
@@ -47,7 +47,7 @@ jobs:
           ./package-npmjs.sh
           cp npmjs/test/test_api.mjs npmjs/dist/
       - name: Upload JavaScript artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-npmjs
           path: npmjs/dist/
@@ -68,11 +68,11 @@ jobs:
         - '3.12-dev'
     steps:
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '${{ matrix.python-version }}'
+        python-version: ${{ matrix.python-version }}
     - name: Download Python artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-pypi
         path: dist/
@@ -93,11 +93,11 @@ jobs:
           - 'v20.x'
     steps:
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '${{ matrix.node-version }}'
+        node-version: ${{ matrix.node-version }}
     - name: Download JavaScript artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-npmjs
         path: dist/
@@ -107,7 +107,7 @@ jobs:
         node dist/test_api.mjs
   check: # group all `test (*)` workflows into one for the required status check
     needs: [test-python, test-javascript]
-    if: always() && !contains(needs.*.result, 'cancelled')
+    if: ${{ always() && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-latest
     steps:
       - run: ${{ contains(needs.*.result, 'failure') && 'false' || 'true' }}
@@ -117,20 +117,20 @@ jobs:
     environment: publish
     permissions:
       id-token: write
-    if: "!contains(github.event.head_commit.message, 'skip py')"
+    if: ${{ !contains(github.event.head_commit.message, 'skip py') }}
     steps:
     - name: Download Python artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-pypi
         path: dist/
     - name: Publish wheels to Test PyPI
-      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
+      if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') }}
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
     - name: Publish wheels to PyPI
-      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
+      if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release') }}
       uses: pypa/gh-action-pypi-publish@release/v1
   publish-javascript:
     needs: check
@@ -138,22 +138,22 @@ jobs:
     environment: publish
     permissions:
       id-token: write
-    if: "!contains(github.event.head_commit.message, 'skip js')"
+    if: ${{ !contains(github.event.head_commit.message, 'skip js') }}
     steps:
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         registry-url: 'https://registry.npmjs.org'
     - name: Download JavaScript artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-npmjs
         path: dist/
     - name: Publish package to NPM (dry run)
-      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
+      if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') }}
       run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ') --dry-run
     - name: Publish package to NPM
-      if: "github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release')"
+      if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/release') }}
       run: npm publish --access public $(find dist -name *.tgz -printf 'file:%p ') ${{ github.event.ref == 'refs/heads/release' && '--tag latest' || '--tag release' }}
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -161,10 +161,10 @@ jobs:
   release:
     needs: check
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop')"
+    if: ${{ contains(github.event.head_commit.message, 'autorelease') && github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PUSH_TOKEN }}
