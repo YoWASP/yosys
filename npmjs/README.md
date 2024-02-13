@@ -17,7 +17,7 @@ API reference
 
 This package provides one function:
 
-- `runYosys` (alias `cmd:yosys`)
+- `runYosys`
 
 For more detail, see the documentation for [the JavaScript YoWASP runtime](https://github.com/YoWASP/runtime-js#api-reference).
 
@@ -31,8 +31,8 @@ The version of this package is derived from the upstream Yosys package version i
 2. `Y`: Yosys minor version
 3. `Z`: Yosys patch version; ignored if present
 4. `N`: matches the `N` in the `X.Y+N` upstream version, if present
-5. `M`: package build version; disambiguates different builds produced from the same Yosys source tree
-6. `-dev`: present only for packages built from unreleased Yosys snapshots; marks these packages as pre-releases
+5. `-dev`: present only for packages built from unreleased Yosys snapshots; marks these packages as pre-releases
+6. `M`: package build version; disambiguates different builds produced from the same Yosys source tree
 
 With this scheme, there is a direct correspondence between upstream versions and [SemVer][semver] NPM package versions.
 
