@@ -5,16 +5,19 @@ export type Tree = {
 export type OutputStream =
     (bytes: Uint8Array | null) => void;
 
+export type RunOptions = {
+    stdout?: OutputStream | null,
+    stderr?: OutputStream | null,
+    decodeASCII?: boolean
+};
+
+export type Command =
+    (args?: string[], files?: Tree, options?: RunOptions) => Tree | Promise<Tree> | undefined;
+
 export class Exit extends Error {
     code: number;
     files: Tree;
 }
-
-export type Command = (args?: string[], files?: Tree, options?: {
-    stdout?: OutputStream | null,
-    stderr?: OutputStream | null,
-    decodeASCII?: boolean
-}) => Promise<Tree>;
 
 export const runYosys: Command;
 
