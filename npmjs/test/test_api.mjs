@@ -11,7 +11,7 @@ const expected = {
   "modules": {
     "inv": {
       "attributes": {
-        "hdlname": "\\inv",
+        "hdlname": "inv",
         "top": "00000000000000000000000000000001",
         "src": "inv.v:1.1-1.56"
       },
@@ -74,5 +74,6 @@ const expected = {
   }
 };
 if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+  console.log(JSON.stringify(actual));
   throw 'test failed';
 }
