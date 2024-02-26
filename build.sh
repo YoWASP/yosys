@@ -20,6 +20,6 @@ ENABLE_PLUGINS := 0
 ENABLE_ZLIB := 0
 
 CXXFLAGS += -flto
-LDFLAGS += -Wl,--strip-all
+LINKFLAGS += -Wl,--strip-all
 END
 make -C yosys-build -f ../yosys-src/Makefile PRETTY=0 CXX="ccache clang"
