@@ -16,7 +16,7 @@ jobs:
       - name: Update upstream code
         run: |
           git -C yosys-src pull --ff-only origin master
-          git -C SymbiYosys-src pull --ff-only origin master
+          git -C SymbiYosys-src pull --ff-only origin main
       - name: Push updated code
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
