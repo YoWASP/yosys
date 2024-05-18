@@ -2,8 +2,8 @@
 
 export SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
 
-WASI_SDK=wasi-sdk-19.0
-WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-19/wasi-sdk-19.0-linux.tar.gz
+WASI_SDK=wasi-sdk-22.0
+WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-22/wasi-sdk-22.0-linux.tar.gz
 if ! [ -d ${WASI_SDK} ]; then curl -L ${WASI_SDK_URL} | tar xzf -; fi
 
 mkdir -p yosys-build
