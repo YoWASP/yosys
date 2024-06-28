@@ -13,15 +13,18 @@ export type RunOptions = {
     stdout?: OutputStream | null,
     stderr?: OutputStream | null,
     decodeASCII?: boolean
+    synchronously?: boolean,
 };
 
 export type Command =
-    (args?: string[], files?: Tree, options?: RunOptions) => Tree | Promise<Tree> | undefined;
+    (args?: string[], files?: Tree, options?: RunOptions) => Promise<Tree> | Tree | undefined;
 
 export class Exit extends Error {
     code: number;
     files: Tree;
 }
+
+//--------8<--------8<--------8<--------8<--------8<--------8<--------8<--------8<--------8<--------
 
 export const runYosys: Command;
 
