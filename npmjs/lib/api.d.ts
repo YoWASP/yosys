@@ -10,10 +10,10 @@ export type OutputStream =
 
 export type RunOptions = {
     stdin?:  InputStream  | null;
-    stdout?: OutputStream | null,
-    stderr?: OutputStream | null,
-    decodeASCII?: boolean
-    synchronously?: boolean,
+    stdout?: OutputStream | null;
+    stderr?: OutputStream | null;
+    decodeASCII?: boolean;
+    synchronously?: boolean;
 };
 
 export type Command =
