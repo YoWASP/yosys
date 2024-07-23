@@ -34,7 +34,7 @@ jobs:
           ccache --max-size=2G -z
       - name: Build WASM binaries
         run: |
-          ./build.sh
+          MAKEFLAGS=-j$(nproc) ./build.sh
       - name: Build Python artifact
         run: |
           ./package-pypi.sh
