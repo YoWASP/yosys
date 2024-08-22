@@ -20,6 +20,6 @@ ENABLE_PLUGINS := 0
 ENABLE_ZLIB := 0
 
 CXXFLAGS += -flto
-LINKFLAGS += -Wl,--strip-all
+LINKFLAGS += -Wl,-z,stack-size=8388608 -Wl,--stack-first -Wl,--strip-all
 END
 make -C yosys-build -f ../yosys-src/Makefile PRETTY=0 CXX="ccache clang"
