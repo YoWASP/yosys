@@ -35,12 +35,12 @@ jobs:
         run: |
           for tag in $(git -C yosys-src tag -l 'v*.*' | sort -rV); do
             ref=$(git -C yosys-src rev-parse $tag)
-            branch=develop-${tag}
+            branch=develop-${tag/v/}
             if ! git rev-parse -q --verify remotes/origin/${branch} >/dev/null; then
               echo "New branch ${branch} with yosys-src ${ref}"
               git -C yosys-src checkout ${ref}
               # 2023-02-06: https://github.com/YosysHQ/sby/issues/229
-              echo "version=${tag}" >> $GITHUB_OUTPUT
+              echo "version=${tag/v/}" >> $GITHUB_OUTPUT
               break
             fi;
           done
