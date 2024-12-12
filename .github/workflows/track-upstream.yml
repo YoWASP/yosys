@@ -33,7 +33,7 @@ jobs:
       - name: Check out new upstream tag
         id: checkout-tag
         run: |
-          for tag in $(git -C yosys-src tag -l '0.*' | sort -rV); do
+          for tag in $(git -C yosys-src tag -l 'v*.*' | sort -rV); do
             ref=$(git -C yosys-src rev-parse $tag)
             branch=develop-${tag}
             if ! git rev-parse -q --verify remotes/origin/${branch} >/dev/null; then
