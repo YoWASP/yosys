@@ -9,10 +9,7 @@ name = "yowasp-yosys"
 description = "Yosys Open SYnthesis Suite"
 readme = "README.md"
 authors = [{name = "Catherine", email = "whitequark@whitequark.org"}]
-license = {text = "ISC"}
-classifiers = [
-	"License :: OSI Approved :: ISC License (ISCL)"
-]
+license = "ISC"
 
 dependencies = [
 	"importlib_resources; python_version<'3.9'",
