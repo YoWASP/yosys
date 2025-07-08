@@ -1,10 +1,6 @@
 import sys
+import importlib.resources
 import yowasp_runtime
-try:
-    from importlib import resources as importlib_resources
-    importlib_resources.files
-except (ImportError, AttributeError):
-    import importlib_resources
 
 
 def run_yosys(argv):
@@ -17,7 +13,7 @@ def _run_yosys_argv():
 
 
 def _run_yosys_smtbmc_argv():
-    prefix = importlib_resources.files(__package__)
+    prefix = importlib.resources.files(__package__)
     sys.path[0:0] = [str(prefix / "share" / "python3")]
     smtbmc_py = prefix / "smtbmc.py"
     with open(smtbmc_py) as f:
@@ -26,7 +22,7 @@ def _run_yosys_smtbmc_argv():
 
 
 def _run_yosys_witness_argv():
-    prefix = importlib_resources.files(__package__)
+    prefix = importlib.resources.files(__package__)
     sys.path[0:0] = [str(prefix / "share" / "python3")]
     witness_py = prefix / "witness.py"
     with open(witness_py) as f:
@@ -35,7 +31,7 @@ def _run_yosys_witness_argv():
 
 
 def _run_sby_argv():
-    prefix = importlib_resources.files(__package__)
+    prefix = importlib.resources.files(__package__)
     sys.path[0:0] = [str(prefix / "share" / "python3")]
     sby_py = prefix / "sby.py"
     with open(sby_py) as f:
