@@ -2,4 +2,6 @@
 *.wasm
 
 /*-build
-/*.o
+/*-prefix
+
+/flex-*

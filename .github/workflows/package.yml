@@ -81,6 +81,7 @@ jobs:
       run: |
         pip install dist/*.whl
         yowasp-yosys --help
+        yowasp-yosys -p 'slang_version'
         yowasp-sby --help
         yowasp-yosys-smtbmc --help
         yowasp-yosys-witness --help
