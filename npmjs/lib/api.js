@@ -8,3 +8,4 @@ const runYosys = yosys.run.bind(yosys);
 
 export { runYosys };
 export const commands = { 'yosys': runYosys };
+export const version = VERSION;

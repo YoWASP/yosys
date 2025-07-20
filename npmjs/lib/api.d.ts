@@ -31,3 +31,5 @@ export const runYosys: Command;
 export const commands: {
     'yosys': Command,
 };
+
+export const version: string;
