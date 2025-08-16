@@ -1,6 +1,8 @@
 /wasi-sdk-*
 *.wasm
 
+/flex-*
+
 /*-build
 /*-prefix
 

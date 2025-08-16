@@ -8,9 +8,20 @@ WASI_SDK_URL=https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-
 if ! [ -d ${WASI_SDK} ]; then curl -L ${WASI_SDK_URL} | tar xzf -; fi
 WASI_SDK_PATH=$(pwd)/${WASI_SDK}
 
+FLEX_VER=2.6.4
+FLEX=flex-${FLEX_VER}
+FLEX_URL=https://github.com/westes/flex/releases/download/v${FLEX_VER}/${FLEX}.tar.gz
+if ! [ -d ${FLEX} ]; then curl -L ${FLEX_URL} | tar xzf -; fi
+
+mkdir -p flex-build
+(cd flex-build &&
+  ../${FLEX}/configure --prefix=$(pwd)/../flex-prefix &&
+  make &&
+  make install)
+
 mkdir -p yosys-build
 cat >yosys-build/Makefile.conf <<END
-export PATH := ${WASI_SDK_PATH}/bin:${PATH}
+export PATH := ${WASI_SDK_PATH}/bin:$(pwd)/flex-prefix/bin:${PATH}
 WASI_SYSROOT := ${WASI_SDK_PATH}/share/wasi-sysroot
 
 PRETTY := 0
@@ -22,7 +33,7 @@ ENABLE_READLINE := 0
 ENABLE_PLUGINS := 0
 ENABLE_ZLIB := 0
 
-CXXFLAGS += -flto
+CXXFLAGS += -I$(pwd)/flex-prefix/include -flto
 LINKFLAGS += -Wl,-z,stack-size=8388608 -Wl,--stack-first -Wl,--strip-all
 LIBS := -Wl,--whole-archive,$(pwd)/yosys-slang-build/libyosys-slang.a,--no-whole-archive
 END
