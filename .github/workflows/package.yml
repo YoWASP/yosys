@@ -31,7 +31,7 @@ jobs:
             yosys-
       - name: Set up ccache
         run: |
-          ccache --max-size=2G -z
+          ccache --max-size=5G -z
       - name: Build WASM binaries
         run: |
           MAKEFLAGS=-j$(nproc) ./build.sh
