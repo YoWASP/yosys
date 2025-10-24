@@ -8,12 +8,16 @@ export type InputStream =
 export type OutputStream =
     (bytes: Uint8Array | null) => void;
 
+export type ProgressCallback =
+    (event: { source: object, totalLength: number, doneLength: number }) => void;
+
 export type RunOptions = {
     stdin?:  InputStream  | null;
     stdout?: OutputStream | null;
     stderr?: OutputStream | null;
     decodeASCII?: boolean;
     synchronously?: boolean;
+    fetchProgress?: ProgressCallback;
 };
 
 export type Command =
